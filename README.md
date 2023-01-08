@@ -1,6 +1,6 @@
 # Quaternion for gamemaker
 These are some useful [quaternion function](https://github.com/callmeEthan/Gamemaker_quaternion/blob/main/scripts/Quaternion/Quaternion.gml) for gamemaker to use in place of GM traditional Euler angles.  
-Quaternion can combine multiple rotation without encountering Gimbal Lock.  
+Quaternion can combine multiple rotation without suffering from Gimbal Lock, which is a well-known problem for euler angles.  
 The quaternion is format as [x, y, z, w], this is how you usually supply to GPU for vertex transform.  
 
 # Transform matrix

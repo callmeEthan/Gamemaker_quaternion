@@ -20,8 +20,7 @@ vec3 rotate_quaternion(vec3 vec, vec4 q)	// ROTATE BY QUATERNION
 }
 vec3 transform_vertex(vec3 vec, vec3 pos, vec4 rot, vec3 scale)
 {
-	vec3 vertex = vec * scale;
-	vertex = rotate_quaternion(vertex, rot);
+	vec3 vertex = rotate_quaternion(vec * scale, rot);
 	return vertex + pos;
 }
 

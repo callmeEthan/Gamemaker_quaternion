@@ -53,7 +53,7 @@ function quaternion_transform_vector(q, vx, vy, vz) {
 function quaternion_rotate_local(q, xrot, yrot, zrot)
 {
 	// Rotate a quaternion around it's local axis.
-	var rot = angle_to_quaternion(-xrot, yrot, zrot)
+	var rot = angle_to_quaternion(xrot, yrot, zrot)
 	return quaternion_multiply(q, rot);
 }
 

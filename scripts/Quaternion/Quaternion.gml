@@ -5,7 +5,7 @@
 function quaternion_identity()
 {
 	// Create a simple 1d array quaternion angle, with no rotation.
-	return [0,0,0,1]
+	return [0.00001,0,0,1]
 }
 
 function angle_to_quaternion(xangle, yangle, zangle)

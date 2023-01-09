@@ -6,18 +6,18 @@ Quaternion can combine multiple rotation without suffering from Gimbal Lock, whi
 **Basic quaternion**  
 The quaternion is format as [x, y, z, w] (1d array), this is how you usually supply to GPU for vertex transform. Default quaternion with no rotation is [0, 0, 0, 1].   
 ```
-rotation = quaternion_identity()
+rotation = quaternion_identity();
 ```
 **Quaternion rotation**  
 You can rotate a quaternion by multiplying two quaternions.
 ```
-//	Rotate a quaternion around world Z-axis
+// Rotate a quaternion around world Z-axis
 var quat = angle_to_quaternion(0, 0, angle);
 rotation = quaternion_multiply(quat, rotation);
 ```
 You can also rotate a quaternion by it's own local axis.  
 ```
-//	Rotate a quaternion around local Y-axis
+// Rotate a quaternion around local Y-axis
 var quat = angle_to_quaternion(0, angle, 0);
 rotation = quaternion_multiply(rotation, quat);
 ```

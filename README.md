@@ -3,12 +3,12 @@ These are some useful [quaternion function](https://github.com/callmeEthan/Gamem
 Quaternion can combine multiple rotation without suffering from Gimbal Lock, which is a well-known problem for euler angles.  
 
 # Replacing Euler angles
-**Basic quaternion**
+**Basic quaternion**  
 The quaternion is format as [x, y, z, w] (1d array), this is how you usually supply to GPU for vertex transform. Default quaternion with no rotation is [0, 0, 0, 1].   
 ```
 rotation = quaternion_identity()
 ```
-**Quaternion rotation**
+**Quaternion rotation**  
 You can rotate a quaternion by multiplying two quaternions.
 ```
 //	Rotate a quaternion around world Z-axis

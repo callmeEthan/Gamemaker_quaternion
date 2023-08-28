@@ -37,7 +37,7 @@ There is also a [shader](https://github.com/callmeEthan/Gamemaker_quaternion/blo
 shader_set(sh_quat_transform);
 shader_set_uniform_f(shader_get_uniform(sh_quat_transform, "u_position"), x, y, z);
 shader_set_uniform_f(shader_get_uniform(sh_quat_transform, "u_scale"), xscale, yscale, zscale);
-shader_set_uniform_f(shader_get_uniform(sh_quat_transform, "u_rotate"), q[0], q[1], q[2], q[3]);
+shader_set_uniform_f_array(shader_get_uniform(sh_quat_transform, "u_rotate"), quaternion);
 vertex_submit(model, pr_trianglelist, texture);
 shader_reset();
 ```

@@ -37,7 +37,7 @@ function quaternion_multiply(R, S)
 	return [Qx, Qy, Qz, Qw]  
 }
 
-function quaternion_transform_vector(quat, x, y, z, array)
+function quaternion_transform_vector(quat, x, y, z, array=array_create(3))
 {
 	// Rotate a vector by a quaternion angle
 	// If an array is not supplied, return a new array.
@@ -46,18 +46,10 @@ function quaternion_transform_vector(quat, x, y, z, array)
 	var qy = quat[1]
 	var qz = quat[2]
 	var qw = quat[3]
-	if !is_undefined(array)
-	{
-		array[@0] = qw*qw*x + 2*qy*qw*z - 2*qz*qw*y + qx*qx*x + 2*qy*qx*y + 2*qz*qx*z - qz*qz*x - qy*qy*x;
-		array[@1] = 2*qx*qy*x + qy*qy*y + 2*qz*qy*z + 2*qw*qz*x - qz*qz*y + qw*qw*y - 2*qx*qw*z - qx*qx*y;
-		array[@2] = 2*qx*qz*x + 2*qy*qz*y + qz*qz*z - 2*qw*qy*x - qy*qy*z + 2*qw*qx*y - qx*qx*z + qw*qw*z;
-		exit;
-	}
-	return [
-		qw*qw*x + 2*qy*qw*z - 2*qz*qw*y + qx*qx*x + 2*qy*qx*y + 2*qz*qx*z - qz*qz*x - qy*qy*x,
-		2*qx*qy*x + qy*qy*y + 2*qz*qy*z + 2*qw*qz*x - qz*qz*y + qw*qw*y - 2*qx*qw*z - qx*qx*y,
-		2*qx*qz*x + 2*qy*qz*y + qz*qz*z - 2*qw*qy*x - qy*qy*z + 2*qw*qx*y - qx*qx*z + qw*qw*z
-		]
+	array[@0] = qw*qw*x + 2*qy*qw*z - 2*qz*qw*y + qx*qx*x + 2*qy*qx*y + 2*qz*qx*z - qz*qz*x - qy*qy*x;
+	array[@1] = 2*qx*qy*x + qy*qy*y + 2*qz*qy*z + 2*qw*qz*x - qz*qz*y + qw*qw*y - 2*qx*qw*z - qx*qx*y;
+	array[@2] = 2*qx*qz*x + 2*qy*qz*y + qz*qz*z - 2*qw*qy*x - qy*qy*z + 2*qw*qx*y - qx*qx*z + qw*qw*z;
+	return array;
 }
 
 function quaternion_rotate_local(q, xrot, yrot, zrot)
@@ -71,7 +63,10 @@ function quaternion_rotate_local(q, xrot, yrot, zrot)
 function quaternion_conjugate(q) 
 {
 	//	Return the conjugate of a quaternion 
-	return [-q[0], -q[1], -q[2], q[3]];
+	q[@0]*=-1;
+	q[@1]*=-1;
+	q[@2]*=-1;
+	return q;
 }
 
 function quaternion_inverse(q) 

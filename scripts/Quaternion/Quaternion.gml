@@ -210,9 +210,7 @@ function quaternion_slerp(qa, qb, amount, array=array_create(4))
 	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
 	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
 	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
-	var angle = arccos(clamp(dot, -1, 1));
-	var denom = sin(angle);
-	if denom==0
+	if dot>0.9995
 	{	// Linear interpolation
 		array[@0] = lerp(qax, qbx, amount);
 		array[@1] = lerp(qay, qby, amount);
@@ -220,6 +218,8 @@ function quaternion_slerp(qa, qb, amount, array=array_create(4))
 		array[@3] = lerp(qaw, qbw, amount);
 	}
 	// Spherical linear interpolation.
+	var angle = arccos(dot);
+	var denom = sin(angle);
 	var r1 = sin((1-amount)*angle);
 	var r2 = sin(amount*angle);
 	array[@0] = (qax * r1 + qbx * r2)/denom

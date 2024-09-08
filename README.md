@@ -26,7 +26,7 @@ You can interpolate between two quaternion unit using one of the three function
 ```
 var q1, q2; 				// Two quaternion rotation unit
 var amount = 2 				// interpolation value between 0 and 1
-var q = array_create(4); 	  // Final output
+var q = array_create(4); 	    // Final output
 quaternion_lerp(q1, q2, amount, q);	// linear interpolation
 quaternion_slerp(q1, q2, amount, q);	// spherical-linear-interpolation
 quaternion_nlerp(q1, q2, amount, q);	// normalized-linear-interpolation.

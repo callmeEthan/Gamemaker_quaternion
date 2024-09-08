@@ -178,7 +178,7 @@ function quaternion_to_rotation_matrix(q)
 	return M
 }
 
-function quaternion_normalize(q, result)
+function quaternion_normalize(q, array=array_create(4))
 {
 	// Normalize vec4 quaternion, output will be written directly onto result array[4].
 	//	output result can be the same as input, if result array not defined, return a new array.
@@ -187,11 +187,11 @@ function quaternion_normalize(q, result)
 	if l == 0 {return quaternion_identity()}
 	l = sqrt(l);
 	var j = 1 / l;
-	if is_undefined(result) return [q[0] * j, q[1] * j, q[2] * j, q[3] * j];
-	result[@0] = q[0] * j;
-	result[@1] = q[1] * j;
-	result[@2] = q[2] * j;
-	result[@3] = q[3] * j;
+	array[@0] = q[0] * j;
+	array[@1] = q[1] * j;
+	array[@2] = q[2] * j;
+	array[@3] = q[3] * j;
+	return array;
 }
 
 function quaternion_lerp(qa, qb, amount, array=array_create(4))
@@ -200,7 +200,7 @@ function quaternion_lerp(qa, qb, amount, array=array_create(4))
 	array[@0] = lerp(qa, qb, amount);
 	array[@1] = lerp(qa, qb, amount);
 	array[@2] = lerp(qa, qb, amount);
-	array[@3] = lerp(qa, qb, amount);
+	array[@3] = lerp(qa, qb, amount);;
 	return array;
 }
 
@@ -210,22 +210,40 @@ function quaternion_slerp(qa, qb, amount, array=array_create(4))
 	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
 	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
 	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
-	if dot>0.9995
+	if dot>0.99
 	{	// Linear interpolation
 		array[@0] = lerp(qax, qbx, amount);
 		array[@1] = lerp(qay, qby, amount);
 		array[@2] = lerp(qaz, qbz, amount);
 		array[@3] = lerp(qaw, qbw, amount);
+		return array;
 	}
-	// Spherical linear interpolation.
 	var angle = arccos(dot);
 	var denom = sin(angle);
+	// Spherical linear interpolation.
 	var r1 = sin((1-amount)*angle);
 	var r2 = sin(amount*angle);
 	array[@0] = (qax * r1 + qbx * r2)/denom
 	array[@1] = (qay * r1 + qby * r2)/denom
 	array[@2] = (qaz * r1 + qbz * r2)/denom
 	array[@3] = (qaw * r1 + qbw * r2)/denom
+	return array;
+}
+
+function quaternion_nlerp(qa, qb, amount, array)
+{
+	// Interpolate between two quaternions representing rotations with Normalized-linear-interpolation.
+	// While nlerp is faster and more efficient than slerp; however, it does not perform a constant angular velocity interpolation (there might be variable acceleration/decceleration during interpolation)
+	// It should be fine for short interpolation intervals (small angles).
+	var qx = lerp(qa[0], qb[0], amount);
+	var qy = lerp(qa[1], qb[1], amount);
+	var qz = lerp(qa[2], qb[2], amount);
+	var qw = lerp(qa[3], qb[3], amount);
+	var l = sqrt(qx*qx + qy*qy + qz*qz + qw*qw);
+	array[@0] = qx / l;
+	array[@1] = qy / l;
+	array[@2] = qz / l;
+	array[@3] = qw / l;
 	return array;
 }
 

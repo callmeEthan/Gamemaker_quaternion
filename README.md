@@ -21,8 +21,35 @@ You can also rotate a quaternion by it's own local axis.
 var quat = angle_to_quaternion(0, angle, 0);
 rotation = quaternion_multiply(rotation, quat);
 ```
+**Interpolation**  
+You can interpolate between two quaternion unit using one of the three function
+```
+var q1, q2; 				// Two quaternion rotation unit
+var amount = 2 				// interpolation value between 0 and 1
+var q = array_create(4); 	// Final output
+quaternion_lerp(q1, q2, amount, q);		// linear interpolation
+quaternion_slerp(q1, q2, amount, q);	// spherical-linear-interpolation
+quaternion_nlerp(q1, q2, amount, q);	// normalized-linear-interpolation.
+```
+- Linear interpolation is fast, but does not represent angular rotation correctly (low quality).  
+- Spherical linear interpolation produce correct angular rotation with constant velocity (high quality).  
+- Normalized linear interpolation is faster than slerp, correctly represent angular rotation but does not perform a constant velocity interpolation (variable acceleration/decceleration during interpolation).  
 
-
+**Transformation**  
+Transform a unit vector by a quaternion
+```
+var pos = quaternion_transform_vector(quat, x, y, z)
+```
+Result is an array containing new coordinate of the unit vector [x,y,z].  
+**Difference**  
+You can get the rotation difference between two quaternion unit:
+```
+var q = quaternion_difference(q1, q2);	// Return array quaternion unit [x,y,z,w]
+```
+Or get quaternion unit between two direction vector:
+```
+var q = quaternion_vector_angle(v1, v2);   // Return array quaternion unit [x,y,z,w]
+```
 # Transform matrix
 You can create a matrix from a quaternion that you can use for transform.
 ```

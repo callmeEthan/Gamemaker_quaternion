@@ -287,6 +287,6 @@ function quaternion_difference(qa, qb, array=array_create(4))
 {
 	// Difference of 2 quaternion unit, like angle difference
 	quaternion_conjugate(qb);
-	quaternion_multiply(qb, qa, array);
+	quaternion_multiply(qa, qb, array);
 	if qb!=array quaternion_conjugate(qb);
 }

@@ -2,6 +2,8 @@
 /// 08/09/2023
 /// @callmeEthan
 
+// feather disable GM2017
+
 function quaternion_identity(array=array_create(4))
 {
 	array[@0]=0
@@ -200,7 +202,7 @@ function quaternion_lerp(qa, qb, amount, array=array_create(4))
 	array[@0] = lerp(qa, qb, amount);
 	array[@1] = lerp(qa, qb, amount);
 	array[@2] = lerp(qa, qb, amount);
-	array[@3] = lerp(qa, qb, amount);;
+	array[@3] = lerp(qa, qb, amount);
 	return array;
 }
 
@@ -290,3 +292,5 @@ function quaternion_difference(qa, qb, array=array_create(4))
 	quaternion_multiply(qa, qb, array);
 	if qb!=array quaternion_conjugate(qb);
 }
+
+// feather enable GM2017

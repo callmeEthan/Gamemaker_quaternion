@@ -1,9 +1,14 @@
-/// Quaternion scripts
-/// 08/09/2023
-/// @callmeEthan
+// Quaternion scripts
+// 08/09/2023
+// @callmeEthan
+// https://github.com/callmeEthan/Gamemaker_quaternion/blob/main/scripts/Quaternion/Quaternion.gml
 
 // feather disable GM2017
 
+/// @function						quaternion_identity(array)
+/// @description					Builds an XYZW identity quaternion
+/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
+/// @return	{Array<Real>}			The XYZW identity quaternion
 function quaternion_identity(array=array_create(4))
 {
 	array[@0]=0
@@ -13,6 +18,14 @@ function quaternion_identity(array=array_create(4))
 	return array;
 }
 
+/// @function						quaternion_build(xaxis, yaxis, zaxis, angle, array)
+/// @description					Builds an XYZW quaternion describing the provided axis-angle rotation. Redundant with axis_to_quaternion
+/// @param	{Real}	xaxis			The X axis of the axis-angle rotation
+/// @param	{Real}	yaxis			The Y axis of the axis-angle rotation
+/// @param	{Real}	zaxis			The Z axis of the axis-angle rotation
+/// @param	{Real}	angle			The angle (degrees) of the axis-angle rotation
+/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
+/// @return	{Array<Real>}			The XYZW quaternion describing the provided axis-angle rotation
 function quaternion_build(xaxis, yaxis, zaxis, angle, array=array_create(4))
 {
 	gml_pragma("forceinline");
@@ -25,6 +38,10 @@ function quaternion_build(xaxis, yaxis, zaxis, angle, array=array_create(4))
 	return array;
 }
 
+/// @function					quaternion_to_angle(q)
+/// @description				Returns the XYZ Euler angles (degrees) describing the provided quaternion; the roll-pitch-yaw
+/// @param	{Array<Real>}	q	The XYZW quaternion
+/// @return	{Array<Real>}		The XYZ Euler angles (degrees) equivalent to the provided quaternion; the roll-pitch-yaw
 function quaternion_to_angle(q) {
 	gml_pragma("forceinline");
     // roll (x-axis rotation)
@@ -48,6 +65,31 @@ function quaternion_to_angle(q) {
     return [roll, pitch, yaw];
 }
 
+/// @function							quaternion_to_axis_angle(q)
+/// @description						Converts a quaternion into its corresponding axis-angle transformation
+/// @param	{Array<Real>}	q			The quaternion
+/// @param	{Array<Real>}	[output]	An optional array to write the output to by reference
+/// @return	{Array<Real>}				An array consisting of [AxisX, AxisY, AxisZ, Angle (radians)]
+function quaternion_to_axis_angle(q, output=array_create(4)) {
+	// See https://learn.microsoft.com/en-us/previous-versions/xamarin/essentials/orientation-sensor
+	// A quaternion q is related to the equivalent axis ax - angle Θ as follows:
+	// q = (ax·sin(Θ/2), ay·sin(Θ/2), az·sin(Θ/2), cos(Θ/2))
+	var _theta_over_2 = arccos(q[3]);
+	var _one_over_sin_theta_over_2 = 1 / sin(_theta_over_2);
+	output[@3] = 2 * _theta_over_2; // Theta, i.e. the angle of the axis-angle rotation, in radians
+	output[@0] = q[0] * _one_over_sin_theta_over_2; // The X-axis of the axis-angle rotation
+	output[@1] = q[1] * _one_over_sin_theta_over_2; // The Y-axis of the axis-angle rotation
+	output[@2] = q[2] * _one_over_sin_theta_over_2; // The Z-axis of the axis-angle rotation
+	return output;
+}
+
+/// @function							angle_to_quaternion(xangle, yangle, zangle, output)
+/// @description						Returns the quaternion describing the provided XYZ Euler angles (degrees); the roll-pitch-yaw
+/// @param	{Real}	xangle				The X angle (degrees) of the Euler rotation; the roll
+/// @param	{Real}	yangle				The Y angle (degrees) of the Euler rotation; the pitch
+/// @param	{Real}	zangle				The Z angle (degrees) of the Euler rotation; the yaw
+/// @param	{Array<Real>}	[output]	An optional array to write the output to by reference
+/// @return	{Array<Real>}				The XYZW quaternion describing the provided XYZ Euler rotation
 function angle_to_quaternion(xangle, yangle, zangle, output=array_create(4))
 {
 	gml_pragma("forceinline");
@@ -57,19 +99,25 @@ function angle_to_quaternion(xangle, yangle, zangle, output=array_create(4))
     var cp = dcos(yangle * 0.5);
     var sp = dsin(yangle * 0.5);
     var cy = dcos(zangle * 0.5);
-    var sy = dsin(zangle * 0.5);
-	
-	var q = output;
-    q[@3] = cr * cp * cy + sr * sp * sy;
-    q[@0] = sr * cp * cy - cr * sp * sy;
-    q[@1] = cr * sp * cy + sr * cp * sy;
-    q[@2] = cr * cp * sy - sr * sp * cy;
-    return q;
+    var sy = dsin(zangle * 0.5);	
+    output[@3] = cr * cp * cy + sr * sp * sy;
+    output[@0] = sr * cp * cy - cr * sp * sy;
+    output[@1] = cr * sp * cy + sr * cp * sy;
+    output[@2] = cr * cp * sy - sr * sp * cy;
+    return output;
 }
 
-function axis_to_quaternion(xaxis, yaxis, zaxis, angle)
+/// @function						axis_to_quaternion(xaxis, yaxis, zaxis, angle, array)
+/// @description					Builds an XYZW quaternion describing the provided axis-angle rotation
+/// @param	{Real}	xaxis			The X axis of the axis-angle rotation
+/// @param	{Real}	yaxis			The Y axis of the axis-angle rotation
+/// @param	{Real}	zaxis			The Z axis of the axis-angle rotation
+/// @param	{Real}	angle			The angle (degrees) of the axis-angle rotation
+/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
+/// @return	{Array<Real>}			The XYZW quaternion describing the provided axis-angle rotation
+function axis_to_quaternion(xaxis, yaxis, zaxis, angle, array=array_create(4))
 {
-	return quaternion_build(xaxis, yaxis, zaxis, angle)
+	return quaternion_build(xaxis, yaxis, zaxis, angle, array);
 }
 
 function quaternion_multiply(R, S, array = array_create(4))
@@ -86,18 +134,32 @@ function quaternion_multiply(R, S, array = array_create(4))
 	return array;
 }
 
-function quaternion_rotate_local(q, xrot, yrot, zrot)
+/// @function						quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
+/// @description					Rotates a quaternion around its local axis
+/// @param	{Array<Real>}	q		The quaternion to rotate
+/// @param	{Real}			xrot	The X Euler angle (degrees) by which to rotate the quaternion; the roll
+/// @param	{Real}			yrot	The Y Euler angle (degrees) by which to rotate the quaternion; the pitch
+/// @param	{Real}			zrot	The Z Euler angle (degrees) by which to rotate the quaternion; the yaw
+/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
+/// @return	{Array<Real>}			The rotated quaternion
+function quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
 {
-	// Rotate a quaternion around it's local axis.
 	var rot = angle_to_quaternion(xrot, yrot, zrot)
-	return quaternion_multiply(q, rot, q);
+	return quaternion_multiply(q, rot, array);
 }
 
-function quaternion_rotate_world(q, xrot, yrot, zrot)
+/// @function						quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
+/// @description					Rotates a quaternion around the world axes
+/// @param	{Array<Real>}	q		The quaternion to rotate
+/// @param	{Real}			xrot	The X Euler angle (degrees) by which to rotate the quaternion; the roll
+/// @param	{Real}			yrot	The Y Euler angle (degrees) by which to rotate the quaternion; the pitch
+/// @param	{Real}			zrot	The Z Euler angle (degrees) by which to rotate the quaternion; the yaw
+/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
+/// @return	{Array<Real>}			The rotated quaternion
+function quaternion_rotate_world(q, xrot, yrot, zrot, array = array_create(4))
 {
-	// Rotate a quaternion around world axis.
 	var rot = angle_to_quaternion(xrot, yrot, zrot)
-	return quaternion_multiply(rot, q, q);
+	return quaternion_multiply(rot, q, array);
 }
 
 function matrix_build_quaternion(x, y, z, quaternion, xscale, yscale, zscale, matrix=array_create(16))
@@ -106,36 +168,35 @@ function matrix_build_quaternion(x, y, z, quaternion, xscale, yscale, zscale, ma
 	// https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
 	//	You can defined output array (1D array length 16), it will write transform matrix directly onto output array and return nothing.
 	//	Output should be an array size 16 to write data directly, if not defined return a new array.
-   gml_pragma("forceinline");
-   var mat = matrix;
-   var sqw = quaternion[3]*quaternion[3];
-   var sqx = quaternion[0]*quaternion[0];
-   var sqy = quaternion[1]*quaternion[1];
-   var sqz = quaternion[2]*quaternion[2];
-   mat[@ 0] = (sqx - sqy - sqz + sqw) * xscale; // since sqw + sqx + sqy + sqz =1
-   mat[@ 5] = (-sqx + sqy - sqz + sqw) * yscale;
-   mat[@ 10] = (-sqx - sqy + sqz + sqw) * zscale;
+	gml_pragma("forceinline");
+	var sqw = quaternion[3]*quaternion[3];
+	var sqx = quaternion[0]*quaternion[0];
+	var sqy = quaternion[1]*quaternion[1];
+	var sqz = quaternion[2]*quaternion[2];
+	matrix[@ 0] = (sqx - sqy - sqz + sqw) * xscale; // since sqw + sqx + sqy + sqz =1
+	matrix[@ 5] = (-sqx + sqy - sqz + sqw) * yscale;
+	matrix[@ 10] = (-sqx - sqy + sqz + sqw) * zscale;
    
-   var tmp1 = quaternion[0]*quaternion[1];
-   var tmp2 = quaternion[2]*quaternion[3];
-   mat[@ 1] = 2.0 * (tmp1 + tmp2) * xscale;
-   mat[@ 4] = 2.0 * (tmp1 - tmp2) * yscale;
+	var tmp1 = quaternion[0]*quaternion[1];
+	var tmp2 = quaternion[2]*quaternion[3];
+	matrix[@ 1] = 2.0 * (tmp1 + tmp2) * xscale;
+	matrix[@ 4] = 2.0 * (tmp1 - tmp2) * yscale;
    
-   tmp1 = quaternion[0]*quaternion[2];
-   tmp2 = quaternion[1]*quaternion[3];
-   mat[@ 2] = 2.0 * (tmp1 - tmp2) * xscale;
-   mat[@ 8] = 2.0 * (tmp1 + tmp2) * zscale;
+	tmp1 = quaternion[0]*quaternion[2];
+	tmp2 = quaternion[1]*quaternion[3];
+	matrix[@ 2] = 2.0 * (tmp1 - tmp2) * xscale;
+	matrix[@ 8] = 2.0 * (tmp1 + tmp2) * zscale;
    
-   tmp1 = quaternion[1]*quaternion[2];
-   tmp2 = quaternion[0]*quaternion[3];
-   mat[@ 6] = 2.0 * (tmp1 + tmp2) * yscale;
-   mat[@ 9] = 2.0 * (tmp1 - tmp2) * zscale;
+	tmp1 = quaternion[1]*quaternion[2];
+	tmp2 = quaternion[0]*quaternion[3];
+	matrix[@ 6] = 2.0 * (tmp1 + tmp2) * yscale;
+	matrix[@ 9] = 2.0 * (tmp1 - tmp2) * zscale;
 	
-	mat[@ 12] = x;
-	mat[@ 13] = y;
-	mat[@ 14] = z;
-	mat[@ 15] = 1.0;
-	return mat;
+	matrix[@ 12] = x;
+	matrix[@ 13] = y;
+	matrix[@ 14] = z;
+	matrix[@ 15] = 1.0;
+	return matrix;
 }
 
 function quaternion_conjugate(q) 
@@ -180,6 +241,11 @@ function quaternion_to_rotation_matrix(q)
 	return M
 }
 
+/// @function						quaternion_normalize(q, array=array_create(4))
+/// @description					normalizes the quaternion
+/// @param	{Array<Real>}	q		The quaternion to normalize
+/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
+/// @return	{Array<Real}			The normalized quaternion
 function quaternion_normalize(q, array=array_create(4))
 {
 	// Normalize vec4 quaternion, output will be written directly onto result array[4].
@@ -262,6 +328,11 @@ function quaternion_transform_vector(quat, x, y, z, array=array_create(3))
 	return array;
 }
 
+/// @function					quaternion_vector_angle(v0, v1, array=array_create(4))
+/// @description				Returns the rotation unit between two directional vectors. TODO: From v0 to v1 or from v1 to v0?
+/// @param	{Array<Real>}	v0	The first vector
+///	@param	{Array<Real>}	v1	The second vector
+/// @return	{Array<Real>}		The XYZW quaternion rotation from one of the vectors to the other. TODO: From which to which?
 function quaternion_vector_angle(v0, v1, array=array_create(4))
 {
 	// Return rotation unit between two directional vector (nearest rotation angle).
@@ -273,7 +344,7 @@ function quaternion_vector_angle(v0, v1, array=array_create(4))
 	var angle = arccos( d/(m1*m2)); 
 	
 	if angle==0 {quaternion_identity(array); return array};
-	if angle==pi/2 {if abs(v0[2])=1 cross_product(v0, [0,1,0], array) else cross_product(v0, [0,0,1], array)
+	if angle==pi/2{if abs(v0[2])=1 cross_product(v0, [0,1,0], array) else cross_product(v0, [0,0,1], array)
 	} else {cross_product(v0, v1, array);}
 	normalize(array);
 	
@@ -292,5 +363,8 @@ function quaternion_difference(qa, qb, array=array_create(4))
 	quaternion_multiply(qa, qb, array);
 	if qb!=array quaternion_conjugate(qb);
 }
+
+// Possible future addition:
+// https://stackoverflow.com/questions/3684269/component-of-a-quaternion-rotation-around-an-axis
 
 // feather enable GM2017

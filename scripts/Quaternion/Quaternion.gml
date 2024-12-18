@@ -120,6 +120,11 @@ function axis_to_quaternion(xaxis, yaxis, zaxis, angle, array=array_create(4))
 	return quaternion_build(xaxis, yaxis, zaxis, angle, array);
 }
 
+/// @function					quaternion_multiply(R, S, array = array_create(4))
+/// @description				Returns the product of 4x4 matrices R and S
+/// @param	{Array<Real>}	R	The first 4x4 matrix
+/// @param	{Array<Real>}	S	The second 4x4 matrix
+/// @return	{Array<Real>}		The product, R*S
 function quaternion_multiply(R, S, array = array_create(4))
 { 
 	gml_pragma("forceinline");

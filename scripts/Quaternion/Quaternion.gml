@@ -140,12 +140,11 @@ function quaternion_multiply(R, S, array = array_create(4))
 /// @param	{Real}			xrot	The X Euler angle (degrees) by which to rotate the quaternion; the roll
 /// @param	{Real}			yrot	The Y Euler angle (degrees) by which to rotate the quaternion; the pitch
 /// @param	{Real}			zrot	The Z Euler angle (degrees) by which to rotate the quaternion; the yaw
-/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
 /// @return	{Array<Real>}			The rotated quaternion
 function quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
 {
 	var rot = angle_to_quaternion(xrot, yrot, zrot)
-	return quaternion_multiply(q, rot, array);
+	return quaternion_multiply(q, rot, q);
 }
 
 /// @function						quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
@@ -154,12 +153,11 @@ function quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
 /// @param	{Real}			xrot	The X Euler angle (degrees) by which to rotate the quaternion; the roll
 /// @param	{Real}			yrot	The Y Euler angle (degrees) by which to rotate the quaternion; the pitch
 /// @param	{Real}			zrot	The Z Euler angle (degrees) by which to rotate the quaternion; the yaw
-/// @param	{Array<Real>}	[array]	An optional array to write the output to by reference
 /// @return	{Array<Real>}			The rotated quaternion
 function quaternion_rotate_world(q, xrot, yrot, zrot, array = array_create(4))
 {
 	var rot = angle_to_quaternion(xrot, yrot, zrot)
-	return quaternion_multiply(rot, q, array);
+	return quaternion_multiply(rot, q, q);
 }
 
 function matrix_build_quaternion(x, y, z, quaternion, xscale, yscale, zscale, matrix=array_create(16))
@@ -344,7 +342,7 @@ function quaternion_vector_angle(v0, v1, array=array_create(4))
 	var angle = arccos( d/(m1*m2)); 
 	
 	if angle==0 {quaternion_identity(array); return array};
-	if angle==pi/2{if abs(v0[2])=1 cross_product(v0, [0,1,0], array) else cross_product(v0, [0,0,1], array)
+	if angle==pi/2 {if abs(v0[2])=1 cross_product(v0, [0,1,0], array) else cross_product(v0, [0,0,1], array)
 	} else {cross_product(v0, v1, array);}
 	normalize(array);
 	

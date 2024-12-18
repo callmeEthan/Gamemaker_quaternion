@@ -141,7 +141,7 @@ function quaternion_multiply(R, S, array = array_create(4))
 /// @param	{Real}			yrot	The Y Euler angle (degrees) by which to rotate the quaternion; the pitch
 /// @param	{Real}			zrot	The Z Euler angle (degrees) by which to rotate the quaternion; the yaw
 /// @return	{Array<Real>}			The rotated quaternion
-function quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
+function quaternion_rotate_local(q, xrot, yrot, zrot)
 {
 	var rot = angle_to_quaternion(xrot, yrot, zrot)
 	return quaternion_multiply(q, rot, q);
@@ -154,7 +154,7 @@ function quaternion_rotate_local(q, xrot, yrot, zrot, array = array_create(4))
 /// @param	{Real}			yrot	The Y Euler angle (degrees) by which to rotate the quaternion; the pitch
 /// @param	{Real}			zrot	The Z Euler angle (degrees) by which to rotate the quaternion; the yaw
 /// @return	{Array<Real>}			The rotated quaternion
-function quaternion_rotate_world(q, xrot, yrot, zrot, array = array_create(4))
+function quaternion_rotate_world(q, xrot, yrot, zrot)
 {
 	var rot = angle_to_quaternion(xrot, yrot, zrot)
 	return quaternion_multiply(rot, q, q);

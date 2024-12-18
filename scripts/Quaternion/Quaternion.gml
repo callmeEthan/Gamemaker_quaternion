@@ -362,7 +362,4 @@ function quaternion_difference(qa, qb, array=array_create(4))
 	if qb!=array quaternion_conjugate(qb);
 }
 
-// Possible future addition:
-// https://stackoverflow.com/questions/3684269/component-of-a-quaternion-rotation-around-an-axis
-
 // feather enable GM2017

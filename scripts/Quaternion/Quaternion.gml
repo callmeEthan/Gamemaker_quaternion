@@ -265,23 +265,57 @@ function quaternion_normalize(q, array=array_create(4))
 	return array;
 }
 
+/// @function						quaternion_lerp(qa, qb, amount, array)
+/// @description					Lerp the quaternions directly
+/// @param	{Array<Real>}	qa		The quaternion from which to lerp
+/// @param	{Array<Real>}	qb		The quaternion to which to lerp
+/// @param	{Real}			amount	The lerp factor, from 0 to 1
+/// @param	{Array<Real>}	[array]	Optional pass-by-reference output array
 function quaternion_lerp(qa, qb, amount, array=array_create(4))
 {
 	// Linear interpolation between two vector, fast but lower quality (use slerp for better quality).
-	array[@0] = lerp(qa, qb, amount);
-	array[@1] = lerp(qa, qb, amount);
-	array[@2] = lerp(qa, qb, amount);
-	array[@3] = lerp(qa, qb, amount);
+	
+	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
+	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
+	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+	if (dot < 0)
+	{
+		// Make sure we take the shortest way around
+		qbx = -qbx;
+		qby = -qby;
+		qbz = -qbz;
+		qbw = -qbw;
+	}
+	
+	array[@0] = lerp(qax, qbx, amount);
+	array[@1] = lerp(qay, qby, amount);
+	array[@2] = lerp(qaz, qbz, amount);
+	array[@3] = lerp(qaw, qbw, amount);
 	return array;
 }
 
+/// @function		quaternion_slerp(qa, qb, amount, array)
+/// @description	Lerp the quaternions using spherical linear interpolation. See comments for details.
+/// @param	{Array<Real>}	qa		The quaternion from which to lerp
+/// @param	{Array<Real>}	qb		The quaternion to which to lerp
+/// @param	{Real}			amount	The lerp factor, from 0 to 1
+/// @param	{Array<Real>}	[array]	Optional pass-by-reference output array
 function quaternion_slerp(qa, qb, amount, array=array_create(4))
 {
 	// Interpolate between two quaternions representing rotations with Spherical-linear-interpolation for better quality
 	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
 	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
 	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
-	if dot>0.99
+	if (dot < 0)
+	{
+		// Make sure we take the shortest way around
+		qbx = -qbx;
+		qby = -qby;
+		qbz = -qbz;
+		qbw = -qbw;
+		dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+	}
+	if (dot > 0.99)
 	{	// Linear interpolation
 		array[@0] = lerp(qax, qbx, amount);
 		array[@1] = lerp(qay, qby, amount);
@@ -301,15 +335,34 @@ function quaternion_slerp(qa, qb, amount, array=array_create(4))
 	return array;
 }
 
-function quaternion_nlerp(qa, qb, amount, array)
+/// @function		quaternion_nlerp(qa, qb, amount, array)
+/// @description	Lerp the quaternions using normalized linear interpolation. See comments for details.
+/// @param	{Array<Real>}	qa		The quaternion from which to lerp
+/// @param	{Array<Real>}	qb		The quaternion to which to lerp
+/// @param	{Real}			amount	The lerp factor, from 0 to 1
+/// @param	{Array<Real>}	[array]	Optional pass-by-reference output array
+function quaternion_nlerp(qa, qb, amount, array=array_create(4))
 {
 	// Interpolate between two quaternions representing rotations with Normalized-linear-interpolation.
 	// While nlerp is faster and more efficient than slerp; however, it does not perform a constant angular velocity interpolation (there might be variable acceleration/decceleration during interpolation)
 	// It should be fine for short interpolation intervals (small angles).
-	var qx = lerp(qa[0], qb[0], amount);
-	var qy = lerp(qa[1], qb[1], amount);
-	var qz = lerp(qa[2], qb[2], amount);
-	var qw = lerp(qa[3], qb[3], amount);
+	
+	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
+	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
+	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+	if (dot < 0)
+	{
+		// Make sure we take the shortest way around
+		qbx = -qbx;
+		qby = -qby;
+		qbz = -qbz;
+		qbw = -qbw;
+	}
+	
+	var qx = lerp(qax, qbx, amount);
+	var qy = lerp(qay, qby, amount);
+	var qz = lerp(qaz, qbz, amount);
+	var qw = lerp(qaw, qbw, amount);
 	var l = sqrt(qx*qx + qy*qy + qz*qz + qw*qw);
 	array[@0] = qx / l;
 	array[@1] = qy / l;

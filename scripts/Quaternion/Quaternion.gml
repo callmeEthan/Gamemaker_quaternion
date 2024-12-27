@@ -420,4 +420,60 @@ function quaternion_difference(qa, qb, array=array_create(4))
 	if qb!=array quaternion_conjugate(qb);
 }
 
+
+/// @function						matrix_to_quaternion(matrix, array=array_create(4))
+/// @description					Get the rotation from a transformation (4x4) matrix and return a quaternion unit.
+/// @param	{Array<Real>}	matrix	Transformation matrix (4x4)
+/// @param	{Array<Real>}	array	Optional pass-by-reference output array
+function matrix_to_quaternion(matrix, array = array_create(4))
+{
+	var qx, qy, qz, qw, s, trace
+	// Convert transformation matrix to rotation matrix
+	// Source: https://stackoverflow.com/questions/27655885/get-position-rotation-and-scale-from-matrix-in-opengl
+	var a00=matrix[0], a10=matrix[1], a20=matrix[2];
+	var a01=matrix[4], a11=matrix[5], a21=matrix[6];
+	var a02=matrix[8], a12=matrix[9], a22=matrix[10];
+	var factor = sqrt(a00 * a00 + a01 * a01 + a02 * a02);
+	a00/=factor; a01/=factor; a02/=factor;
+	a10/=factor; a11/=factor; a12/=factor;
+	a20/=factor; a21/=factor; a22/=factor;
+	
+	// Convert rotation matrix to quaternion unit
+	// Source: https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+	trace = a00 + a11 + a22; // removed + 1.0f;
+	if( trace > 0 ) {// changed M_EPSILON to 0
+		s = 0.5 / sqrt(trace+ 1.0);
+		qw = 0.25 / s;
+		qx = ( a21 - a12 ) * s;
+		qy = ( a02 - a20 ) * s;
+		qz = ( a10 - a01 ) * s;
+	} else {
+		if ( a00 > a11 && a00 > a22 ) {
+		    s = 2.0 * sqrt( 1.0 + a00 - a11 - a22);
+		    qw = (a21 - a12 ) / s;
+		    qx = 0.25 * s;
+		    qy = (a01 + a10 ) / s;
+		    qz = (a02 + a20 ) / s;
+		} else if (a11 > a22) {
+		    s = 2.0 * sqrt( 1.0 + a11 - a00 - a22);
+		    qw = (a02 - a20 ) / s;
+		    qx = (a01 + a10 ) / s;
+		    qy = 0.25 * s;
+		    qz = (a12 + a21 ) / s;
+		} else {
+		    s = 2.0 * sqrt( 1.0 + a22 - a00 - a11 );
+		    qw = (a10 - a01 ) / s;
+		    qx = (a02 + a20 ) / s;
+		    qy = (a12 + a21 ) / s;
+		    qz = 0.25 * s;
+		}
+	}
+	
+	array[@0] = qx;
+	array[@1] = qy;
+	array[@2] = qz;
+	array[@3] = qw;
+	return array
+}
+
 // feather enable GM2017

@@ -277,7 +277,7 @@ function quaternion_lerp(qa, qb, amount, array=array_create(4))
 	
 	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
 	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
-	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qbz;
 	if (dot < 0)
 	{
 		// Make sure we take the shortest way around
@@ -305,7 +305,7 @@ function quaternion_slerp(qa, qb, amount, array=array_create(4))
 	// Interpolate between two quaternions representing rotations with Spherical-linear-interpolation for better quality
 	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
 	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
-	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qbz;
 	if (dot < 0)
 	{
 		// Make sure we take the shortest way around
@@ -313,7 +313,7 @@ function quaternion_slerp(qa, qb, amount, array=array_create(4))
 		qby = -qby;
 		qbz = -qbz;
 		qbw = -qbw;
-		dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+		dot = qaw * qbw + qax * qbx + qay * qby + qaz * qbz;
 	}
 	if (dot > 0.99)
 	{	// Linear interpolation
@@ -349,7 +349,7 @@ function quaternion_nlerp(qa, qb, amount, array=array_create(4))
 	
 	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
 	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
-	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qbz;
 	if (dot < 0)
 	{
 		// Make sure we take the shortest way around

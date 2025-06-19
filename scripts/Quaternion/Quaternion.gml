@@ -476,4 +476,15 @@ function matrix_to_quaternion(matrix, array = array_create(4))
 	return array
 }
 
+function quaternion_angle_difference(qa, qb)
+{
+	// Return the angular difference (in degree) between two quaternion.
+	// To get the rotational difference two quaternion use quaternion_difference().
+	var qax=qa[0], qay=qa[1], qaz=qa[2], qaw=qa[3];
+	var qbx=qb[0], qby=qb[1], qbz=qb[2], qbw=qb[3];
+	var dot = qaw * qbw + qax * qbx + qay * qby + qaz * qaz;
+	var theta = arccos(dot);
+	return radtodeg(theta);	
+}
+
 // feather enable GM2017
